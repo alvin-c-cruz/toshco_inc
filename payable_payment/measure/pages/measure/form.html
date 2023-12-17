@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Measure{% endblock %}
+
+{% block content %}
+<div class="container p-5">
+    {% if form.id %}
+    <h1 class="mb-4">Edit Measure</h1>
+    <form action="{{ url_for('measure.edit', measure_id=form.id) }}" method="post">
+        <input type="number" name="measure_id" value="{{ form.id }}" hidden>
+        {% else %}
+    <h1 class="mb-4">Add Measure</h1>
+    <form action="{{ url_for('measure.add') }}" method="post">
+        {% endif %}
+    
+        <div class="row mb-3">
+            <label for="measure_name" class="col-sm-2 col-form-label">Measure Name</label>
+            <div class="col-sm-10">
+                <input type="text" name="measure_name" value="{{ form.measure_name }}" class="form-control" autofocus>
+                {% if form.errors.get('measure_name') %}
+                <p style="color: red;">{{ form.errors.get('measure_name') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="symbol" class="col-sm-2 col-form-label">Symbol</label>
+            <div class="col-sm-10">
+                <input type="text" name="symbol" value="{{ form.symbol }}" class="form-control">
+                {% if form.errors.get('symbol') %}
+                <p style="color: red;">{{ form.errors.get('symbol') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-10 offset-sm-2">
+                <input type="submit" value="Save" class="btn btn-primary">
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

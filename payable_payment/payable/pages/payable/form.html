@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Payables{% endblock %}
+
+{% block content %}
+<div class="container p-5">
+    {% if form.id %}
+        <h1 class="mb-4">Edit Payable</h1>
+        <form action="{{ url_for('payable.edit', payable_id=form.id) }}" method="post">
+            <input type="number" name="payable_id" value="{{ form.id }}" hidden>
+    {% else %}
+        <h1 class="mb-4">New Payable</h1>
+        <form action="{{ url_for('payable.add') }}" method="post">
+    {% endif %}
+
+        <div class="row mb-3">
+            <label for="record_date" class="col-4 col-form-label">Date</label>
+            <div class="col-8">
+                <input type="date" name="record_date" value="{{ form.record_date }}" class="form-control" autofocus>
+                {% if form.errors.get('record_date') %}
+                <p class="text-danger">{{ form.errors.get('record_date') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="ap_number" class="col-4 col-form-label">AP No.</label>
+            <div class="col-8">
+                <input type="text" name="ap_number" value="{{ form.ap_number }}" class="form-control">
+                {% if form.errors.get('ap_number') %}
+                <p class="text-danger">{{ form.errors.get('ap_number') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="vendor_id" class="col-4 col-form-label">Vendor</label>
+            <div class="col-8">
+                <select name="vendor_id" class="form-select">
+                    <option value="0"></option>
+                    {% for option in vendor_dropdown %}
+                        {% if option['id'] == form.vendor_id %}
+                            <option value="{{ option['id'] }}" selected>{{ option['vendor_name'] }}</option>
+                        {% else %}
+                            <option value="{{ option['id'] }}">{{ option['vendor_name'] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                {% if form.errors.get('vendor_id') %}
+                <p class="text-danger">{{ form.errors.get('vendor_id') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="invoice_number" class="col-4 col-form-label">Invoice No.</label>
+            <div class="col-8">
+                <input type="text" name="invoice_number" value="{{ form.invoice_number }}" class="form-control">
+                {% if form.errors.get('invoice_number') %}
+                <p class="text-danger">{{ form.errors.get('invoice_number') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <table class="table table-striped table-light">
+            <thead>
+                <tr>
+                    <th>Quantity</th>
+                    <th>Measure</th>
+                    <th>Description</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                    <th>Account</th>
+                    <th>Sales Tax</th>
+                    <th>WTax</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, form_detail in form.details %}
+                <tr>
+                    <td>
+                        {% if form_detail.id %}
+                        <input type="number" name="transfer_in_detail_id-{{ i }}" value="{{ form_detail.id }}" hidden>
+                        {% endif %}
+                        <input type="number" name="quantity-{{ i }}" value="{{ form_detail.quantity }}" class="form-control">
+                        {% if form_detail.errors.get('quantity') %}
+                        <p class="text-danger">{{ form_detail.errors.get('quantity') }}</p>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <select name="item_id-{{ i }}" class="form-select">
+                            <option value="0"></option>
+                            {% for item in item_dropdown %}
+                                {% if item['id'] == form_detail.item_id %}
+                                <option value="{{ item['id'] }}" selected>{{ item['item_name'] }}</option>
+                                {% else %}
+                                <option value="{{ item['id'] }}">{{ item['item_name'] }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        {% if form_detail.errors.get('item_id') %}
+                        <p class="text-danger">{{ form_detail.errors.get('item_id') }}</p>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <input type="text" name="production_date-{{ i }}" value="{{ form_detail.production_date }}" class="form-control">
+                        {% if form_detail.errors.get('production_date') %}
+                        <p class="text-danger">{{ form.errors.get('production_date') }}</p>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <input type="submit" value="Save" class="btn btn-success">
+    </form>
+
+    {% for i, form_detail in form.details %}
+    <script>
+        $(function () {
+            $.ajax({
+                url: '{{ url_for("item.item_autocomplete") }}'
+            }).done(function (data) {
+                $('#item_id-{{ i }}').autocomplete({
+                    source: data,
+                    minLength: 2
+                });
+            });
+        });
+    </script>
+    {% endfor %}
+</div>
+{% endblock %}
