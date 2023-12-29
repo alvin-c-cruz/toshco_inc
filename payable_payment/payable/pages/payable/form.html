@@ -92,7 +92,7 @@
                     <th>Amount</th>
                     <th>Account</th>
                     <th>Sales Tax</th>
-                    <th>WTax</th>
+                    <th>Wtax</th>
                 </tr>
             </thead>
             <tbody>
@@ -102,7 +102,7 @@
                         {% if form_detail.id %}
                         <input type="number" name="payable_detail_id-{{ i }}" value="{{ form_detail.id }}" hidden>
                         {% endif %}
-                        <input type="number" name="quantity-{{ i }}" value="{{ form_detail.quantity }}" class="form-control">
+                        <input type="number" name="quantity-{{ i }}" value="{{ form_detail.quantity }}" class="form-control currency">
                         {% if form_detail.errors.get('quantity') %}
                         <p class="text-danger">{{ form_detail.errors.get('quantity') }}</p>
                         {% endif %}
@@ -114,7 +114,7 @@
                                 {% if measure['id'] == form_detail.measure_id %}
                                 <option value="{{ measure['id'] }}" selected>{{ measure['measure_name'] }}</option>
                                 {% else %}
-                                <option value="{{ measure['id'] }}">{{ measureitem['measure_name'] }}</option>
+                                <option value="{{ measure['id'] }}">{{ measure['measure_name'] }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
@@ -138,13 +138,13 @@
                         {% endif %}
                     </td>
                     <td>
-                        <input type="number" name="unit_price-{{ i }}" value="{{ form_detail.unit_price }}" class="form-control">
+                        <input type="number" name="unit_price-{{ i }}" value="{{ form_detail.unit_price }}" class="form-control currency">
                         {% if form_detail.errors.get('unit_price') %}
                         <p class="text-danger">{{ form_detail.errors.get('unit_price') }}</p>
                         {% endif %}
                     </td>
                     <td>
-                        <input type="number" name="amount-{{ i }}" value="{{ form_detail.formatted_amount }}" class="form-control">
+                        <input type="number" name="amount-{{ i }}" value="{{ form_detail.amount() }}" class="form-control">
                         {% if form_detail.errors.get('amount') %}
                         <p class="text-danger">{{ form_detail.errors.get('amount') }}</p>
                         {% endif %}
@@ -154,9 +154,9 @@
                             <option value="0"></option>
                             {% for account in account_dropdown %}
                                 {% if account['id'] == form_detail.account_id %}
-                                <option value="{{ account['id'] }}" selected>{{ account['account_name'] }}</option>
+                                <option value="{{ account['id'] }}" selected>{{ account['account'] }}</option>
                                 {% else %}
-                                <option value="{{ account['id'] }}">{{ account['account_name'] }}</option>
+                                <option value="{{ account['id'] }}">{{ account['account'] }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
@@ -169,9 +169,9 @@
                             <option value="0"></option>
                             {% for sales_tax in sales_tax_dropdown %}
                                 {% if sales_tax['id'] == form_detail.sales_tax_id %}
-                                <option value="{{ sales_tax['id'] }}" selected>{{ sales_tax['sales_tax_name'] }}</option>
+                                <option value="{{ sales_tax['id'] }}" selected>{{ sales_tax['sales_tax'] }}</option>
                                 {% else %}
-                                <option value="{{ sales_tax['id'] }}">{{ sales_tax['sales_tax_name'] }}</option>
+                                <option value="{{ sales_tax['id'] }}">{{ sales_tax['sales_tax'] }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
@@ -184,9 +184,9 @@
                             <option value="0"></option>
                             {% for w_tax in w_tax_dropdown %}
                                 {% if w_tax['id'] == form_detail.w_tax_id %}
-                                <option value="{{ w_tax['id'] }}" selected>{{ w_tax['w_tax_name'] }}</option>
+                                <option value="{{ w_tax['id'] }}" selected>{{ w_tax['w_tax'] }}</option>
                                 {% else %}
-                                <option value="{{ w_tax['id'] }}">{{ w_tax['w_tax_name'] }}</option>
+                                <option value="{{ w_tax['id'] }}">{{ w_tax['w_tax'] }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
@@ -207,9 +207,9 @@
     <script>
         $(function () {
             $.ajax({
-                url: '{{ url_for("item.item_autocomplete") }}'
+                url: '{{ url_for("item.autocomplete") }}'
             }).done(function (data) {
-                $('#item_id-{{ i }}').autocomplete({
+                $('#item_name-{{ i }}').autocomplete({
                     source: data,
                     minLength: 2
                 });
@@ -217,5 +217,23 @@
         });
     </script>
     {% endfor %}
+
+    <script>
+        // Get the input element
+        var inputElement = document.getElementByClassName('currency');
+
+        // When the input loses focus
+        inputElement.addEventListener('blur', function(event) {
+            var value = parseFloat(event.target.value.replace(/,/g, '')); // Remove commas, if any
+            event.target.value = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        });
+
+        // When the input gains focus
+        inputElement.addEventListener('focus', function(event) {
+            var value = parseFloat(event.target.value.replace(/,/g, '')); // Remove commas, if any
+            event.target.value = value.toFixed(2);
+        });
+
+    </script>
 </div>
 {% endblock %}

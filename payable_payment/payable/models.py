@@ -13,6 +13,15 @@ class Payable(db.Model):
     receiving_number = db.Column(db.String())
     po_number = db.Column(db.String())
 
+    def amount_due(self):
+        return 100
+    
+    def formatted_amount_due(self):
+        return '{:,.2f}'.format(self.amount_due()) 
+    
+    def entry(self):
+        return "In progress"
+
 
 class PayableDetail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,10 +37,11 @@ class PayableDetail(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
     item = db.relationship('Item', backref='payable_details', lazy=True)
     
+    unit_price = db.Column(db.Float, default=0)
+
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     account = db.relationship('Account', backref='payable_details', lazy=True)
 
-    unit_price = db.Column(db.Float, default=0)
 
     sales_tax_id = db.Column(db.Integer, db.ForeignKey('sales_tax.id'), nullable=False)
     sales_tax = db.relationship('SalesTax', backref='payable_details', lazy=True)

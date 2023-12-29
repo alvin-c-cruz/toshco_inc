@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Rowell Industrial Corporation{% endblock %}
+{% block title %}Payables{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="text-danger">Transfer-In</h1>
-    <a href="{{ url_for('transfer_in.add') }}" class="btn btn-success mb-3">Add Transfer-In</a>
+    <h1 class="text-danger">Payables</h1>
+    <a href="{{ url_for('payable.add') }}" class="btn btn-success mb-3">Add Payable</a>
 
     <div class="card">
         <div class="card-body">
@@ -13,29 +13,35 @@
                 <table class="table table-hover">
                     <thead class="thead-light">
                         <tr>
-                            <th>Reference</th>
-                            <th>Date Transferred</th>
-                            <th>From</th>
+                            <th>Date</th>
+                            <th>AP No.</th>
+                            <th>Vendor</th>
+                            <th>RR No.</th>
+                            <th>PO No.</th>
+                            <th>Amount Due</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for transfer_in in transfer_ins %}
+                        {% for payable in payables %}
                         <tr>
-                            <td>{{ transfer_in.reference }}</td>
-                            <td>{{ transfer_in.transfer_date }}</td>
-                            <td>{{ transfer_in.department }}</td>
+                            <td>{{ payable.record_date }}</td>
+                            <td>{{ payable.ap_number }}</td>
+                            <td>{{ payable.vendor.vendor_name }}</td>
+                            <td>{{ payable.receiving_number }}</td>
+                            <td>{{ payable.po_number }}</td>
+                            <td>{{ payable.formatted_amount_due() }}</td>
                             <td>
-                                <a href="{{ url_for('transfer_in.edit', transfer_in_id=transfer_in.id) }}"
+                                <a href="{{ url_for('payable.edit', payable_id=payable.id) }}"
                                     class="btn btn-warning btn-sm">Edit</a>
-                                <a href="{{ url_for('transfer_in.delete', transfer_in_id=transfer_in.id) }}"
+                                <a href="{{ url_for('payable.delete', payable_id=payable.id) }}"
                                     class="btn btn-danger btn-sm" onclick="return confirmDelete();">Delete</a>
                             </td>
                         </tr>
                         {% endfor %}
-                        {% if transfer_ins|length == 0 %}
+                        {% if payables|length == 0 %}
                         <tr>
-                            <td colspan="4" class="text-center">No records found.</td>
+                            <td colspan="7" class="text-center">No records found.</td>
                         </tr>
                         {% endif %}
                     </tbody>
