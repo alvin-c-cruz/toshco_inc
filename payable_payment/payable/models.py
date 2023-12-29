@@ -10,6 +10,8 @@ class Payable(db.Model):
     vendor = db.relationship('Vendor', backref='payables', lazy=True)
 
     invoice_number = db.Column(db.String())
+    receiving_number = db.Column(db.String())
+    po_number = db.Column(db.String())
 
 
 class PayableDetail(db.Model):
@@ -19,17 +21,24 @@ class PayableDetail(db.Model):
     payable = db.relationship('Payable', backref='payable_details', lazy=True)
 
     quantity = db.Column(db.Float, default=0)
-    unit_price = db.Column(db.Float, default=0)
     
     measure_id = db.Column(db.Integer, db.ForeignKey('measure.id'), nullable=False)
     measure = db.relationship('Measure', backref='payable_details', lazy=True)
-    
+
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
     item = db.relationship('Item', backref='payable_details', lazy=True)
     
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     account = db.relationship('Account', backref='payable_details', lazy=True)
-    
+
+    unit_price = db.Column(db.Float, default=0)
+
+    sales_tax_id = db.Column(db.Integer, db.ForeignKey('sales_tax.id'), nullable=False)
+    sales_tax = db.relationship('SalesTax', backref='payable_details', lazy=True)
+
+    w_tax_id = db.Column(db.Integer, db.ForeignKey('w_tax.id'), nullable=False)
+    w_tax = db.relationship('WTax', backref='payable_details', lazy=True)
+
     @property
     def formatted_quantity(self):
         return '{:,.0f}'.format(self.quantity)

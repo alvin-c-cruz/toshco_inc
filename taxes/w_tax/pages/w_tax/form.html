@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Withholding Taxes{% endblock %}
+
+{% block content %}
+<div class="container p-5">
+    {% if form.id %}
+    <h1 class="mb-4">Edit Withholding Tax</h1>
+    <form action="{{ url_for('w_tax.edit', w_tax_id=form.id) }}" method="post">
+        <input type="number" name="w_tax_id" value="{{ form.id }}" hidden>
+        {% else %}
+    <h1 class="mb-4">Add Withholding Tax</h1>
+    <form action="{{ url_for('w_tax.add') }}" method="post">
+        {% endif %}
+
+        
+        <div class="row mb-3">
+            <label for="w_tax_code" class="col-sm-2 col-form-label">ATC</label>
+            <div class="col-sm-10">
+                <input type="text" name="w_tax_code" value="{{ form.w_tax_code }}" class="form-control" autofocus>
+                {% if form.errors.get('w_tax_code') %}
+                <p style="color: red;">{{ form.errors.get('w_tax_code') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="w_tax_name" class="col-sm-2 col-form-label">Withholding Tax Name</label>
+            <div class="col-sm-10">
+                <input type="text" name="w_tax_name" value="{{ form.w_tax_name }}" class="form-control">
+                {% if form.errors.get('w_tax_name') %}
+                <p style="color: red;">{{ form.errors.get('w_tax_name') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="w_tax_rate" class="col-sm-2 col-form-label">Tax Rate</label>
+            <div class="col-sm-10">
+                <input type="text" name="w_tax_rate" value="{{ form.w_tax_rate }}" class="form-control">
+                {% if form.errors.get('w_tax_rate') %}
+                <p style="color: red;">{{ form.errors.get('w_tax_rate') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-10 offset-sm-2">
+                <input type="submit" value="Save" class="btn btn-primary">
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
