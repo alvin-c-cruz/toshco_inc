@@ -14,6 +14,7 @@
                     <thead class="thead-light">
                         <tr>
                             <th>Sales Tax Name</th>
+                            <th>Tax Rate</th>
                             <th>Account Title</th>
                             <th>Action</th>
                         </tr>
@@ -22,6 +23,7 @@
                         {% for sales_tax in sales_taxes %}
                         <tr>
                             <td>{{ sales_tax.sales_tax_name }}</td>
+                            <td>{{ sales_tax.tax_rate }}</td>
                             <td>{{ sales_tax.account.account_number }}: {{ sales_tax.account.account_title }}</td>
                             <td>
                                 <a href="{{ url_for('sales_tax.edit', sales_tax_id=sales_tax.id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -30,7 +32,7 @@
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="3">No record found.</td>
+                            <td colspan="4">No record found.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

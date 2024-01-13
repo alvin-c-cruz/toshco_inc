@@ -14,6 +14,8 @@ class Payable(db.Model):
     receiving_number = db.Column(db.String())
     po_number = db.Column(db.String())
 
+    
+
     def amount_due(self):
         balance = 0
         for entry in self.payable_details:
@@ -62,5 +64,61 @@ class PayableDetail(db.Model):
     def __str__(self):
         return f"{self.quantity} {self.measure.measure_name} of {self.item.item_name} for {self.amount}"
     
+    def net(self):
+        vat = round(self.amount / (1 + (self.purchase_tax.vat_rate())) * self.purchase_tax.vat_rate, 2)
+        net_of_vat = self.amount - vat
+        ewt = round(net_of_vat * self.purchase_w_tax.wt_rate(), 2)
+        amount_due = self.amount - ewt
+
+        return {
+            "net_of_vat": net_of_vat,
+            "vat": vat,
+            "ewt": ewt,
+            "amount_due": amount_due
+        }
+
+        
     def entry(self):
-        return
+        debits = []
+        credits = []
+
+        net = self.net()
+
+        # Tax Base
+        debits.append(
+            {
+                "account": self.account,
+                "amount": net['net_of_vat']
+            }
+        )
+
+        # VAT
+        if net['vat']:
+            debits.append(
+                {
+                    "account": self.purchase_tax.account,
+                    "amount": net['vat']
+                }
+            )
+
+        # EWT
+        if net['ewt']:
+            credits.append(
+                {
+                    "account": self.purchase_w_tax.account,
+                    "amount": net['ewt']
+                }
+            )
+
+        # AMOUNT DUE account is added in the accumulated entry in main model
+        credits.append(
+            {
+                "ammount": net['amount_due']
+            }
+        )
+
+
+        return {
+            "debits": debits,
+            "credits": credits
+        }

@@ -24,6 +24,16 @@
         </div>
 
         <div class="row mb-3">
+            <label for="tax_rate" class="col-sm-2 col-form-label">Tax Rate</label>
+            <div class="col-sm-10">
+                <input type="text" name="tax_rate" value="{{ form.tax_rate }}" class="form-control">
+                {% if form.errors.get('tax_rate') %}
+                <p style="color: red;">{{ form.errors.get('tax_rate') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
             <label for="account_id" class="col-sm-2 col-form-label">Account Title</label>
             <div class="col-sm-10">
                 <select name="account_id" class="form-select">

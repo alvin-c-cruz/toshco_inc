@@ -8,6 +8,7 @@ from .models import PurchaseTax
 class PurchaseTaxForm:
     id: int = None
     purchase_tax_name: str = ""
+    tax_rate: str = ""
     account_id: int = 0
 
     errors = {}
@@ -15,6 +16,7 @@ class PurchaseTaxForm:
     def populate(self, object):
         self.id = object.id
         self.purchase_tax_name = object.purchase_tax_name
+        self.tax_rate =object.tax_rate
         self.account_id = object.account_id
 
     def save(self):
@@ -22,6 +24,7 @@ class PurchaseTaxForm:
             # Add a new record
             purchase_tax = PurchaseTax(
                 purchase_tax_name=self.purchase_tax_name,
+                tax_rate=self.tax_rate,
                 account_id=self.account_id
                 )
             db.session.add(purchase_tax)
@@ -30,12 +33,23 @@ class PurchaseTaxForm:
             purchase_tax = PurchaseTax.query.get_or_404(self.id)
             if purchase_tax:
                 purchase_tax.purchase_tax_name = self.purchase_tax_name
+                purchase_tax.tax_rate = self.tax_rate 
                 purchase_tax.account_id = self.account_id
         db.session.commit()
 
     def post(self, request_form):
         self.id = request_form.get('purchase_tax_id')
         self.purchase_tax_name = request_form.get('purchase_tax_name')
+    
+        if type(request_form.get('tax_rate')) == str:
+            value = request_form.get('tax_rate')
+            if value.isnumeric() or (value.replace('.', '', 1).isdigit() and value.count('.') <= 1):
+                self.tax_rate = float(value)
+            else:
+                self.tax_rate = 0
+        else: 
+            self.tax_rate = request_form.get('tax_rate')
+    
         self.account_id = int(request_form.get('account_id'))
 
     def validate_on_submit(self):
