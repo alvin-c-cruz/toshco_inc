@@ -8,18 +8,21 @@ from .models import SalesTax
 class SalesTaxForm:
     id: int = None
     sales_tax_name: str = ""
+    account_id: int = 0
 
     errors = {}
 
     def populate(self, object):
         self.id = object.id
         self.sales_tax_name = object.sales_tax_name
+        self.account_id = object.account_id
 
     def save(self):
         if self.id is None:
             # Add a new record
             sales_tax = SalesTax(
-                sales_tax_name=self.sales_tax_name
+                sales_tax_name=self.sales_tax_name,
+                account_id=self.account_id
                 )
             db.session.add(sales_tax)
         else:
@@ -27,11 +30,13 @@ class SalesTaxForm:
             sales_tax = SalesTax.query.get_or_404(self.id)
             if sales_tax:
                 sales_tax.sales_tax_name = self.sales_tax_name
+                sales_tax.account_id = self.account_id
         db.session.commit()
 
     def post(self, request_form):
         self.id = request_form.get('sales_tax_id')
         self.sales_tax_name = request_form.get('sales_tax_name')
+        self.account_id = int(request_form.get('account_id'))
 
     def validate_on_submit(self):
         self.errors = {}
@@ -42,6 +47,9 @@ class SalesTaxForm:
             existing_sales_tax = SalesTax.query.filter(func.lower(SalesTax.sales_tax_name) == func.lower(self.sales_tax_name), SalesTax.id != self.id).first()
             if existing_sales_tax:
                 self.errors["sales_tax_name"] = "Sales Tax Name already exists. Please choose a different one."
+
+        if not self.account_id:
+            self.errors["account_id"] = "Please select account."
 
         if not self.errors:
             return True

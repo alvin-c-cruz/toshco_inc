@@ -1,4 +1,5 @@
 from acas_auth.application.extensions import db
+from pprint import pprint
 
 
 class Payable(db.Model):
@@ -14,13 +15,19 @@ class Payable(db.Model):
     po_number = db.Column(db.String())
 
     def amount_due(self):
-        return 100
+        balance = 0
+        for entry in self.payable_details:
+            balance += entry.amount
+        return balance
     
     def formatted_amount_due(self):
         return '{:,.2f}'.format(self.amount_due()) 
     
     def entry(self):
-        return "In progress"
+        entries = []
+        for entry in self.payable_details:
+            entries.append(entry)
+        return entries
 
 
 class PayableDetail(db.Model):
@@ -37,26 +44,23 @@ class PayableDetail(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
     item = db.relationship('Item', backref='payable_details', lazy=True)
     
-    unit_price = db.Column(db.Float, default=0)
+    amount = db.Column(db.Float, default=0)
 
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     account = db.relationship('Account', backref='payable_details', lazy=True)
 
+    purchase_tax_id = db.Column(db.Integer, db.ForeignKey('purchase_tax.id'), nullable=False)
+    purchase_tax = db.relationship('PurchaseTax', backref='payable_details', lazy=True)
 
-    sales_tax_id = db.Column(db.Integer, db.ForeignKey('sales_tax.id'), nullable=False)
-    sales_tax = db.relationship('SalesTax', backref='payable_details', lazy=True)
-
-    w_tax_id = db.Column(db.Integer, db.ForeignKey('w_tax.id'), nullable=False)
-    w_tax = db.relationship('WTax', backref='payable_details', lazy=True)
+    purchase_w_tax_id = db.Column(db.Integer, db.ForeignKey('purchase_w_tax.id'), nullable=False)
+    purcuase_w_tax = db.relationship('PurchaseWTax', backref='payable_details', lazy=True)
 
     @property
     def formatted_quantity(self):
         return '{:,.0f}'.format(self.quantity)
+        
+    def __str__(self):
+        return f"{self.quantity} {self.measure.measure_name} of {self.item.item_name} for {self.amount}"
     
-    @property
-    def amount(self):
-        return self.quantity * self.unit_price
-    
-    @property
-    def formatted_amount(self):
-        return '{:,.2f}'.format(self.amount)
+    def entry(self):
+        return

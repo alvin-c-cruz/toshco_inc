@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from sqlalchemy import func
 import re
 from acas_auth.application.extensions import db
-from .models import WTax
+from .models import SalesWTax
 
 
 @dataclass
-class WTaxForm:
+class SalesWTaxForm:
     id: int = None
     w_tax_code: str = ""
     w_tax_name: str = ""
@@ -23,7 +23,7 @@ class WTaxForm:
     def save(self):
         if self.id is None:
             # Add a new record
-            w_tax = WTax(
+            w_tax = SalesWTax(
                 w_tax_code=self.w_tax_code,
                 w_tax_name=self.w_tax_name,
                 w_tax_rate=self.w_tax_rate
@@ -31,7 +31,7 @@ class WTaxForm:
             db.session.add(w_tax)
         else:
             # Update an existing record
-            w_tax = WTax.query.get_or_404(self.id)
+            w_tax = SalesWTax.query.get_or_404(self.id)
             if w_tax:
                 w_tax.w_tax_code = self.w_tax_code
                 w_tax.w_tax_name = self.w_tax_name
@@ -50,7 +50,7 @@ class WTaxForm:
         if not self.w_tax_code:
             self.errors["w_tax_code"] = "Please type ATC."
         else:
-            existing_w_tax = WTax.query.filter(func.lower(WTax.w_tax_code) == func.lower(self.w_tax_code), WTax.id != self.id).first()
+            existing_w_tax = SalesWTax.query.filter(func.lower(SalesWTax.w_tax_code) == func.lower(self.w_tax_code), SalesWTax.id != self.id).first()
             if existing_w_tax:
                 self.errors["w_tax_code"] = "ATC already exists. Please choose a different one."
 
@@ -58,7 +58,7 @@ class WTaxForm:
         if not self.w_tax_name:
             self.errors["w_tax_name"] = "Please type withholding tax description."
         else:
-            existing_w_tax = WTax.query.filter(func.lower(WTax.w_tax_name) == func.lower(self.w_tax_name), WTax.id != self.id).first()
+            existing_w_tax = SalesWTax.query.filter(func.lower(SalesWTax.w_tax_name) == func.lower(self.w_tax_name), SalesWTax.id != self.id).first()
             if existing_w_tax:
                 self.errors["w_tax_name"] = "Description already exists. Please choose a different one."
 

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Sales Taxes{% endblock %}
+{% block title %}Purchase Taxes{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h1>Sales Taxes</h1>
-    <a href="{{ url_for('sales_tax.add') }}" class="btn btn-success mb-3">Add Sales Tax</a>
+    <h1>Purchase Taxes</h1>
+    <a href="{{ url_for('purchase_tax.add') }}" class="btn btn-success mb-3">Add Purchase Tax</a>
 
     <div class="card">
         <div class="card-body">
@@ -13,19 +13,19 @@
                 <table class="table table-hover">
                     <thead class="thead-light">
                         <tr>
-                            <th>Sales Tax Name</th>
+                            <th>Purchase Tax Name</th>
                             <th>Account Title</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for sales_tax in sales_taxes %}
+                        {% for purchase_tax in purchase_taxes %}
                         <tr>
-                            <td>{{ sales_tax.sales_tax_name }}</td>
-                            <td>{{ sales_tax.account.account_number }}: {{ sales_tax.account.account_title }}</td>
+                            <td>{{ purchase_tax.purchase_tax_name }}</td>
+                            <td>{{ purchase_tax.account.account_number }}: {{ purchase_tax.account.account_title }}</td>
                             <td>
-                                <a href="{{ url_for('sales_tax.edit', sales_tax_id=sales_tax.id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <a href="{{ url_for('sales_tax.delete', sales_tax_id=sales_tax.id) }}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Delete</a>
+                                <a href="{{ url_for('purchase_tax.edit', purchase_tax_id=purchase_tax.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="{{ url_for('purchase_tax.delete', purchase_tax_id=purchase_tax.id) }}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Delete</a>
                             </td>
                         </tr>
                         {% else %}

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Withholding Taxes{% endblock %}
+{% block title %}Sales Withholding Taxes{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h1>Withholding Taxes</h1>
-    <a href="{{ url_for('w_tax.add') }}" class="btn btn-success mb-3">Add Withholding Tax</a>
+    <h1>Sales Withholding Taxes</h1>
+    <a href="{{ url_for('sales_w_tax.add') }}" class="btn btn-success mb-3">Add Sales Withholding Tax</a>
 
     <div class="card">
         <div class="card-body">
@@ -24,10 +24,10 @@
                         <tr>
                             <td>{{ w_tax.w_tax_code }}</td>
                             <td>{{ w_tax.w_tax_name }}</td>
-                            <td>{{ w_tax.w_tax_rate }}</td>
+                            <td>{{ w_tax.w_tax_rate }}%</td>
                             <td>
-                                <a href="{{ url_for('w_tax.edit', w_tax_id=w_tax.id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <a href="{{ url_for('w_tax.delete', w_tax_id=w_tax.id) }}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Delete</a>
+                                <a href="{{ url_for('sales_w_tax.edit', w_tax_id=w_tax.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="{{ url_for('sales_w_tax.delete', w_tax_id=w_tax.id) }}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Delete</a>
                             </td>
                         </tr>
                         {% else %}

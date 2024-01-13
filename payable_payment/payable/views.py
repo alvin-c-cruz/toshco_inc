@@ -6,8 +6,8 @@ from .forms import Form
 from .. item import Item
 from .. measure import Measure
 from ledger.account.models import Account
-from taxes.sales_tax import SalesTax
-from taxes.w_tax import WTax
+from taxes.purchase_tax import PurchaseTax
+from taxes.purchase_w_tax import PurchaseWTax
 from .. vendor import Vendor
 from acas_auth.application.extensions import db
 from acas_auth.application.user import login_required, roles_accepted
@@ -40,8 +40,8 @@ def add():
     measure_dropdown = [{"id": measure.id, "measure_name": measure.measure_name} for measure in Measure.query.order_by('measure_name').all()]
     vendor_dropdown = [{"id": vendor.id, "vendor_name": vendor.vendor_name} for vendor in Vendor.query.order_by('vendor_name').all()]
     account_dropdown = [{"id": account.id, "account": account} for account in Account.query.order_by('account_number').all()]
-    sales_tax_dropdown = [{"id": sales_tax.id, "sales_tax": sales_tax} for sales_tax in SalesTax.query.order_by('sales_tax_name').all()]
-    w_tax_dropdown = [{"id": w_tax.id, "w_tax": w_tax} for w_tax in WTax.query.order_by('w_tax_code').all()]
+    purchase_tax_dropdown = [{"id": purchase_tax.id, "purchase_tax": purchase_tax} for purchase_tax in PurchaseTax.query.order_by('purchase_tax_name').all()]
+    purchase_w_tax_dropdown = [{"id": w_tax.id, "purchase_w_tax": w_tax} for w_tax in PurchaseWTax.query.order_by('w_tax_code').all()]
     if request.method == "POST":
         form = Form()
         form.post(request.form)
@@ -62,8 +62,8 @@ def add():
         "measure_dropdown": measure_dropdown,
         "vendor_dropdown": vendor_dropdown,
         "account_dropdown": account_dropdown,        
-        "sales_tax_dropdown": sales_tax_dropdown,        
-        "w_tax_dropdown": w_tax_dropdown,        
+        "purchase_tax_dropdown": purchase_tax_dropdown,        
+        "purchase_w_tax_dropdown": purchase_w_tax_dropdown,        
     }
 
     return render_template(f"{app_name}/form.html", **context)
@@ -77,8 +77,8 @@ def edit(payable_id):
     measure_dropdown = [{"id": measure.id, "measure_name": measure.measure_name} for measure in Measure.query.order_by('measure_name').all()]
     vendor_dropdown = [{"id": vendor.id, "vendor_name": vendor.vendor_name} for vendor in Vendor.query.order_by('vendor_name').all()]
     account_dropdown = [{"id": account.id, "account": account} for account in Account.query.order_by('account_number').all()]
-    sales_tax_dropdown = [{"id": sales_tax.id, "sales_tax": sales_tax} for sales_tax in SalesTax.query.order_by('sales_tax_name').all()]
-    w_tax_dropdown = [{"id": w_tax.id, "w_tax": w_tax} for w_tax in WTax.query.order_by('w_tax_code').all()]
+    purchase_tax_dropdown = [{"id": purchase_tax.id, "purchase_tax": purchase_tax} for purchase_tax in PurchaseTax.query.order_by('purchase_tax_name').all()]
+    purchase_w_tax_dropdown = [{"id": w_tax.id, "purchase_w_tax": w_tax} for w_tax in PurchaseWTax.query.order_by('w_tax_code').all()]
 
     if request.method == "POST":
         form = Form()
@@ -104,12 +104,12 @@ def edit(payable_id):
         for i, detail in enumerate(payable.payable_details):
             form.details[i][1].id = detail.id
             form.details[i][1].quantity = detail.quantity
-            form.details[i][1].unit_price = detail.unit_price
+            form.details[i][1].amount = detail.amount
             form.details[i][1].measure_id = detail.measure_id
             form.details[i][1].item_id = detail.item_id
             form.details[i][1].account_id = detail.account_id
-            form.details[i][1].sales_tax_id = detail.sales_tax_id
-            form.details[i][1].w_tax_id = detail.w_tax_id
+            form.details[i][1].purchase_tax_id = detail.purchase_tax_id
+            form.details[i][1].purchase_w_tax_id = detail.purchase_w_tax_id
 
     context = {
         "form": form,
@@ -117,8 +117,9 @@ def edit(payable_id):
         "measure_dropdown": measure_dropdown,
         "vendor_dropdown": vendor_dropdown,
         "account_dropdown": account_dropdown,        
-        "sales_tax_dropdown": sales_tax_dropdown,        
-        "w_tax_dropdown": w_tax_dropdown,        
+        "purchase_tax_dropdown": purchase_tax_dropdown,        
+        "purchase_w_tax_dropdown": purchase_w_tax_dropdown, 
+        "payable": payable,       
     }
 
     return render_template(f"{app_name}/form.html", **context)

@@ -1,7 +1,7 @@
 from acas_auth.application.extensions import db
 
 
-class WTax(db.Model):
+class SalesWTax(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     w_tax_code = db.Column(db.String(255))
     w_tax_name = db.Column(db.String(255))

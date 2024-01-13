@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, Response
 import json
 from sqlalchemy.exc import IntegrityError
-from .models import WTax
-from .forms import WTaxForm
+from .models import SalesWTax
+from .forms import SalesWTaxForm
 from acas_auth.application.extensions import db
 from acas_auth.application.user import login_required, roles_accepted
 
@@ -17,7 +17,7 @@ ROLES_ACCEPTED = app_label
 @login_required
 @roles_accepted([ROLES_ACCEPTED])
 def home():
-    w_taxes = WTax.query.order_by(WTax.w_tax_name).all()
+    w_taxes = SalesWTax.query.order_by(SalesWTax.w_tax_name).all()
 
     context = {
         "w_taxes": w_taxes
@@ -31,7 +31,7 @@ def home():
 @roles_accepted([ROLES_ACCEPTED])
 def add():
     if request.method == "POST":
-        form = WTaxForm()
+        form = SalesWTaxForm()
         form.post(request.form)
 
         if form.validate_on_submit():
@@ -41,7 +41,7 @@ def add():
             flash("Error.", category="error")
 
     else:
-        form = WTaxForm()
+        form = SalesWTaxForm()
 
     context = {
         "form": form,
@@ -55,7 +55,7 @@ def add():
 @roles_accepted([ROLES_ACCEPTED])
 def edit(w_tax_id):   
     if request.method == "POST":
-        form = WTaxForm()
+        form = SalesWTaxForm()
         form.post(request.form)
 
         if form.validate_on_submit():
@@ -63,8 +63,8 @@ def edit(w_tax_id):
             return redirect(url_for(f'{app_name}.home'))
 
     else:
-        w_tax = WTax.query.get(w_tax_id)
-        form = WTaxForm()
+        w_tax = SalesWTax.query.get(w_tax_id)
+        form = SalesWTaxForm()
         form.populate(w_tax)
 
     context = {
@@ -78,7 +78,7 @@ def edit(w_tax_id):
 @login_required
 @roles_accepted([ROLES_ACCEPTED])
 def delete(w_tax_id):   
-    w_tax = WTax.query.get_or_404(w_tax_id)
+    w_tax = SalesWTax.query.get_or_404(w_tax_id)
     try:
         db.session.delete(w_tax)
         db.session.commit()
@@ -92,5 +92,5 @@ def delete(w_tax_id):
 
 @bp.route("/_autocomplete", methods=['GET'])
 def autocomplete():
-    w_taxes = [account for account in WTax.query.order_by(WTax.w_tax_name).all()]
+    w_taxes = [account for account in SalesWTax.query.order_by(SalesWTax.w_tax_name).all()]
     return Response(json.dumps(w_taxes), mimetype='application/json')

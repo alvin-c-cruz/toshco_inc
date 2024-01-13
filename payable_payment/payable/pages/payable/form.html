@@ -88,11 +88,10 @@
                     <th>Quantity</th>
                     <th>Measure</th>
                     <th>Description</th>
-                    <th>Unit Price</th>
                     <th>Amount</th>
                     <th>Account</th>
-                    <th>Sales Tax</th>
-                    <th>Wtax</th>
+                    <th>VT</th>
+                    <th>WT</th>
                 </tr>
             </thead>
             <tbody>
@@ -138,13 +137,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <input type="number" name="unit_price-{{ i }}" value="{{ form_detail.unit_price }}" class="form-control currency">
-                        {% if form_detail.errors.get('unit_price') %}
-                        <p class="text-danger">{{ form_detail.errors.get('unit_price') }}</p>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <input type="number" name="amount-{{ i }}" value="{{ form_detail.amount() }}" class="form-control">
+                        <input type="number" name="amount-{{ i }}" value="{{ form_detail.amount }}" class="form-control">
                         {% if form_detail.errors.get('amount') %}
                         <p class="text-danger">{{ form_detail.errors.get('amount') }}</p>
                         {% endif %}
@@ -165,33 +158,33 @@
                         {% endif %}
                     </td>
                     <td>
-                        <select name="sales_tax_id-{{ i }}" class="form-select">
+                        <select name="purchase_tax_id-{{ i }}" class="form-select">
                             <option value="0"></option>
-                            {% for sales_tax in sales_tax_dropdown %}
-                                {% if sales_tax['id'] == form_detail.sales_tax_id %}
-                                <option value="{{ sales_tax['id'] }}" selected>{{ sales_tax['sales_tax'] }}</option>
+                            {% for purchase_tax in purchase_tax_dropdown %}
+                                {% if purchase_tax['id'] == form_detail.purchase_tax_id %}
+                                <option value="{{ purchase_tax['id'] }}" selected>{{ purchase_tax['purchase_tax'] }}</option>
                                 {% else %}
-                                <option value="{{ sales_tax['id'] }}">{{ sales_tax['sales_tax'] }}</option>
+                                <option value="{{ purchase_tax['id'] }}">{{ purchase_tax['purchase_tax'] }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
-                        {% if form_detail.errors.get('sales_tax_id') %}
-                        <p class="text-danger">{{ form_detail.errors.get('sales_tax_id') }}</p>
+                        {% if form_detail.errors.get('purchase_tax_id') %}
+                        <p class="text-danger">{{ form_detail.errors.get('purchase_tax_id') }}</p>
                         {% endif %}
                     </td>
                     <td>
-                        <select name="w_tax_id-{{ i }}" class="form-select">
+                        <select name="purchase_w_tax_id-{{ i }}" class="form-select">
                             <option value="0"></option>
-                            {% for w_tax in w_tax_dropdown %}
-                                {% if w_tax['id'] == form_detail.w_tax_id %}
-                                <option value="{{ w_tax['id'] }}" selected>{{ w_tax['w_tax'] }}</option>
+                            {% for purchase_w_tax in purchase_w_tax_dropdown %}
+                                {% if purchase_w_tax['id'] == form_detail.purchase_w_tax_id %}
+                                <option value="{{ purchase_w_tax['id'] }}" selected>{{ purchase_w_tax['purchase_w_tax'] }}</option>
                                 {% else %}
-                                <option value="{{ w_tax['id'] }}">{{ w_tax['w_tax'] }}</option>
+                                <option value="{{ purchase_w_tax['id'] }}">{{ purchase_w_tax['purchase_w_tax'] }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
-                        {% if form_detail.errors.get('w_tax_id') %}
-                        <p class="text-danger">{{ form_detail.errors.get('w_tax_id') }}</p>
+                        {% if form_detail.errors.get('purchase_w_tax_id') %}
+                        <p class="text-danger">{{ form_detail.errors.get('purchase_w_tax_id') }}</p>
                         {% endif %}
                     </td>
 
@@ -202,6 +195,12 @@
 
         <input type="submit" value="Save" class="btn btn-success">
     </form>
+
+    {% if form.id %}
+        {% for entry in payable.entry() %}
+        <p>{{  entry  }}</p>
+        {% endfor %}
+    {% endif %}
 
     {% for i, form_detail in form.details %}
     <script>

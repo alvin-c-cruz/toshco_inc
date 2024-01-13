@@ -12,20 +12,14 @@ class SubForm:
     id: int = 0
     payable_id:int = 0
     quantity: float = 0
-    unit_price: float = 0
+    amount: float = 0
     measure_id: int = 0
     item_id: int = 0
     account_id: int = 0
-    sales_tax_id: int = 0
-    w_tax_id: int = 0
+    purchase_tax_id: int = 0
+    purchase_w_tax_id: int = 0
 
     errors = {}
-
-    def amount(self):
-        return self.quantity * self.unit_price
-    
-    def formatted_amount(self):
-        return "{:,.2f}".format(self.amount())
 
     def validate(self):
         self.errors = {}
@@ -34,8 +28,8 @@ class SubForm:
             if self.quantity <= 0:
                 self.errors["quantity"] = "Quantity should be greater than zero (0)."
 
-            if self.unit_price < 0:
-                self.errors["unit_price"] = "Unit Price cannot be negative."
+            if self.amount < 0:
+                self.errors["amount"] = "Amount cannot be negative."
 
             if not self.measure_id:
                 self.errors["measure_id"] = "Please select measure."
@@ -46,11 +40,11 @@ class SubForm:
             if not self.account_id:
                 self.errors["account_id"] = "Please select account."
 
-            if not self.sales_tax_id:
-                self.errors["sales_tax_id"] = "Please select sales tax."
+            if not self.purchase_tax_id:
+                self.errors["purchase_tax_id"] = "Please select purchase tax."
 
-            if not self.w_tax_id:
-                self.errors["w_tax_id"] = "Please select w/tax."
+            if not self.purchase_w_tax_id:
+                self.errors["purchase_w_tax_id"] = "Please select w/tax."
 
         if not self.errors:
             return True
@@ -58,7 +52,7 @@ class SubForm:
             return False    
 
     def is_dirty(self):
-        return any([self.quantity, self.unit_price, self.measure_id, self.item_id, self.account_id, self.sales_tax_id, self.w_tax_id])    
+        return any([self.quantity, self.amount, self.measure_id, self.item_id, self.account_id, self.purchase_tax_id, self.purchase_w_tax_id])    
             
 @dataclass
 class Form:
@@ -97,12 +91,12 @@ class Form:
                     new_detail = PayableDetail(
                         payable_id=new_record.id,
                         quantity=detail.quantity,
-                        unit_price=detail.unit_price,
+                        amount=detail.amount,
                         measure_id=detail.measure_id,
                         item_id=detail.item_id,
                         account_id=detail.account_id,
-                        sales_tax_id=detail.sales_tax_id,
-                        w_tax_id=detail.w_tax_id
+                        purchase_tax_id=detail.purchase_tax_id,
+                        purchase_w_tax_id=detail.purchase_w_tax_id
                     )
                     db.session.add(new_detail)
                     db.session.commit()
@@ -127,12 +121,12 @@ class Form:
                         row_detail = PayableDetail(
                             payable_id=record.id,
                             quantity=detail.quantity,
-                            unit_price=detail.unit_price,
+                            amount=detail.amount,
                             measure_id=detail.measure_id,
                             item_id=detail.item_id,
                             account_id=detail.account_id,
-                            sales_tax_id=detail.sales_tax_id,
-                            w_tax_id=detail.w_tax_id
+                            purchase_tax_id=detail.purchase_tax_id,
+                            purchase_w_tax_id=detail.purchase_w_tax_id
                             )
                         db.session.add(row_detail)
 
@@ -158,19 +152,19 @@ class Form:
 
             self.details[i][1].measure_id = int(request_form.get(f'measure_id-{i}'))
 
-            if type(request_form.get(f'unit_price-{i}')) == str:
-                unit_price_value = request_form.get(f'unit_price-{i}')
-                if unit_price_value.isnumeric() or (unit_price_value.replace('.', '', 1).isdigit() and unit_price_value.count('.') <= 1):
-                    self.details[i][1].unit_price = float(unit_price_value)
+            if type(request_form.get(f'amount-{i}')) == str:
+                amount_value = request_form.get(f'amount-{i}')
+                if amount_value.isnumeric() or (amount_value.replace('.', '', 1).isdigit() and amount_value.count('.') <= 1):
+                    self.details[i][1].amount = float(amount_value)
                 else:
-                    self.details[i][1].unit_price = 0
+                    self.details[i][1].amount = 0
             else: 
-                self.details[i][1].unit_price = request_form.get(f'unit_price-{i}')
+                self.details[i][1].amount = request_form.get(f'amount-{i}')
 
             self.details[i][1].item_id = int(request_form.get(f'item_id-{i}'))
             self.details[i][1].account_id = int(request_form.get(f'account_id-{i}'))
-            self.details[i][1].sales_tax_id = int(request_form.get(f'sales_tax_id-{i}'))
-            self.details[i][1].w_tax_id = int(request_form.get(f'w_tax_id-{i}'))
+            self.details[i][1].purchase_tax_id = int(request_form.get(f'purchase_tax_id-{i}'))
+            self.details[i][1].purchase_w_tax_id = int(request_form.get(f'purchase_w_tax_id-{i}'))
 
     def validate_on_submit(self):
         self.errors = {}

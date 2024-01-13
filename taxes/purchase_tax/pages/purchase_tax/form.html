@@ -1,24 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}Sales Taxes{% endblock %}
+{% block title %}Purchase Taxes{% endblock %}
 
 {% block content %}
 <div class="container p-5">
     {% if form.id %}
-    <h1 class="mb-4">Edit Sales Tax</h1>
-    <form action="{{ url_for('sales_tax.edit', sales_tax_id=form.id) }}" method="post">
-        <input type="number" name="sales_tax_id" value="{{ form.id }}" hidden>
+    <h1 class="mb-4">Edit Purchase Tax</h1>
+    <form action="{{ url_for('purchase_tax.edit', purchase_tax_id=form.id) }}" method="post">
+        <input type="number" name="purchase_tax_id" value="{{ form.id }}" hidden>
         {% else %}
-    <h1 class="mb-4">Add Sales Tax</h1>
-    <form action="{{ url_for('sales_tax.add') }}" method="post">
+    <h1 class="mb-4">Add Purchase Tax</h1>
+    <form action="{{ url_for('purchase_tax.add') }}" method="post">
         {% endif %}
     
         <div class="row mb-3">
-            <label for="sales_tax_name" class="col-sm-2 col-form-label">Sales Tax Name</label>
+            <label for="purchase_tax_name" class="col-sm-2 col-form-label">Purchase Tax Name</label>
             <div class="col-sm-10">
-                <input type="text" name="sales_tax_name" value="{{ form.sales_tax_name }}" class="form-control" autofocus>
-                {% if form.errors.get('sales_tax_name') %}
-                <p style="color: red;">{{ form.errors.get('sales_tax_name') }}</p>
+                <input type="text" name="purchase_tax_name" value="{{ form.purchase_tax_name }}" class="form-control" autofocus>
+                {% if form.errors.get('purchase_tax_name') %}
+                <p style="color: red;">{{ form.errors.get('purchase_tax_name') }}</p>
                 {% endif %}
             </div>
         </div>
