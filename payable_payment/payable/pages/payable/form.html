@@ -82,6 +82,29 @@
             </div>
         </div>
 
+        <div class="row mb-3">
+            <label for="account_id" class="col-4 col-form-label">Payable Account</label>
+            <div class="col-8">
+                <select name="account_id" class="form-select">
+                    <option value="0"></option>
+                    {% for account in account_dropdown %}
+                        {% if account['id'] == form.account_id %}
+                        <option value="{{ account['id'] }}" selected>{{ account['account'] }}</option>
+                        {% else %}
+                        <option value="{{ account['id'] }}">{{ account['account'] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                {% if form.errors.get('account_id') %}
+                <p class="text-danger">{{ form.errors.get('account_id') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if form.errors.get('entry') %}
+        <p class="text-danger">{{ form.errors.get('entry') }}</p>
+        {% endif %}
+
         <table class="table table-striped table-light">
             <thead>
                 <tr>
@@ -94,7 +117,7 @@
                     <th>WT</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody>                
                 {% for i, form_detail in form.details %}
                 <tr>
                     <td>

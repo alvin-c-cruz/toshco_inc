@@ -53,7 +53,8 @@ class SubForm:
 
     def is_dirty(self):
         return any([self.quantity, self.amount, self.measure_id, self.item_id, self.account_id, self.purchase_tax_id, self.purchase_w_tax_id])    
-            
+        
+
 @dataclass
 class Form:
     id: int = None
@@ -63,6 +64,7 @@ class Form:
     invoice_number: str = ""
     receiving_number: str = ""
     po_number: str = ""
+    account_id: int = 0
 
     details = []
     errors = {}
@@ -81,7 +83,8 @@ class Form:
                 vendor_id=self.vendor_id,
                 invoice_number=self.invoice_number,
                 receiving_number=self.receiving_number,
-                po_number=self.po_number
+                po_number=self.po_number,
+                account_id=self.account_id
                 )
             db.session.add(new_record)
             db.session.commit()
@@ -111,6 +114,7 @@ class Form:
                 record.invoice_number = self.invoice_number
                 record.receiving_number = self.receiving_number
                 record.po_number = self.po_number
+                record.account_id = self.account_id
                 
                 details = PayableDetail.query.filter(PayableDetail.payable_id==self.id)
                 for detail in details:
@@ -129,7 +133,7 @@ class Form:
                             purchase_w_tax_id=detail.purchase_w_tax_id
                             )
                         db.session.add(row_detail)
-
+                
         db.session.commit()
    
     def post(self, request_form):
@@ -140,6 +144,8 @@ class Form:
         self.invoice_number = request_form.get('invoice_number')
         self.receiving_number = request_form.get('receiving_number')
         self.po_number = request_form.get('po_number')
+        self.account_id = int(request_form.get('account_id'))
+
         for i in range(DETAIL_ROWS):
             if type(request_form.get(f'quantity-{i}')) == str:
                 quantity_value = request_form.get(f'quantity-{i}')
@@ -183,9 +189,20 @@ class Form:
         if not self.vendor_id:
             self.errors["vendor_id"] = "Please select vendor."
 
+        if not self.account_id:
+            self.errors["account_id"] = "Please select payable account."
+
         for i in range(DETAIL_ROWS):
             if not self.details[i][1].validate():
                 detail_validation = False
 
+        all_not_dirty = True
+        for _, detail in self.details:
+            if detail.is_dirty():
+                all_not_dirty = False
+
+        if all_not_dirty:
+            self.errors["entry"] = "There should be at least one entry."       
+
         if not self.errors and detail_validation:
-            return True
+            return True        

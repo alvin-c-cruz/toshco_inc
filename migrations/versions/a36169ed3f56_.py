@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: d6ea22eb6eb0
+Revision ID: a36169ed3f56
 Revises: 
-Create Date: 2024-01-13 20:57:38.117067
+Create Date: 2024-01-14 07:36:59.860326
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd6ea22eb6eb0'
+revision = 'a36169ed3f56'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -39,7 +39,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('w_tax_code', sa.String(length=255), nullable=True),
     sa.Column('w_tax_name', sa.String(length=255), nullable=True),
-    sa.Column('w_tax_rate', sa.String(length=255), nullable=True),
+    sa.Column('w_tax_rate', sa.Float(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('role',
@@ -51,7 +51,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('w_tax_code', sa.String(length=255), nullable=True),
     sa.Column('w_tax_name', sa.String(length=255), nullable=True),
-    sa.Column('w_tax_rate', sa.String(length=255), nullable=True),
+    sa.Column('w_tax_rate', sa.Float(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user',
@@ -83,6 +83,13 @@ def upgrade():
     sa.ForeignKeyConstraint(['account_category_id'], ['account_category.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('user_role',
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('role_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['role_id'], ['role.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('user_id', 'role_id')
+    )
     op.create_table('payable',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('record_date', sa.String(), nullable=True),
@@ -91,19 +98,15 @@ def upgrade():
     sa.Column('invoice_number', sa.String(), nullable=True),
     sa.Column('receiving_number', sa.String(), nullable=True),
     sa.Column('po_number', sa.String(), nullable=True),
+    sa.Column('account_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['account_id'], ['account.id'], ),
     sa.ForeignKeyConstraint(['vendor_id'], ['vendor.id'], ),
     sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('user_role',
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('role_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['role_id'], ['role.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('user_id', 'role_id')
     )
     op.create_table('purchase_tax',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('purchase_tax_name', sa.String(length=255), nullable=True),
+    sa.Column('tax_rate', sa.Float(), nullable=True),
     sa.Column('account_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['account_id'], ['account.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -111,6 +114,7 @@ def upgrade():
     op.create_table('sales_tax',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('sales_tax_name', sa.String(length=255), nullable=True),
+    sa.Column('tax_rate', sa.Float(), nullable=True),
     sa.Column('account_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['account_id'], ['account.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -121,7 +125,7 @@ def upgrade():
     sa.Column('quantity', sa.Float(), nullable=True),
     sa.Column('measure_id', sa.Integer(), nullable=False),
     sa.Column('item_id', sa.Integer(), nullable=False),
-    sa.Column('unit_price', sa.Float(), nullable=True),
+    sa.Column('amount', sa.Float(), nullable=True),
     sa.Column('account_id', sa.Integer(), nullable=False),
     sa.Column('purchase_tax_id', sa.Integer(), nullable=False),
     sa.Column('purchase_w_tax_id', sa.Integer(), nullable=False),
@@ -141,8 +145,8 @@ def downgrade():
     op.drop_table('payable_detail')
     op.drop_table('sales_tax')
     op.drop_table('purchase_tax')
-    op.drop_table('user_role')
     op.drop_table('payable')
+    op.drop_table('user_role')
     op.drop_table('account')
     op.drop_table('vendor')
     op.drop_table('user')

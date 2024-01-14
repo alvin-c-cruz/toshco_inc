@@ -14,7 +14,8 @@ class Payable(db.Model):
     receiving_number = db.Column(db.String())
     po_number = db.Column(db.String())
 
-    
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    account = db.relationship('Account', backref='payables', lazy=True)    
 
     def amount_due(self):
         balance = 0

@@ -99,6 +99,7 @@ def edit(payable_id):
             invoice_number=payable.invoice_number,
             receiving_number=payable.receiving_number,
             po_number=payable.po_number,
+            account_id=payable.account_id,
         )
 
         for i, detail in enumerate(payable.payable_details):
