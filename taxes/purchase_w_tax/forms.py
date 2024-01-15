@@ -11,6 +11,7 @@ class PurchaseWTaxForm:
     w_tax_code: str = ""
     w_tax_name: str = ""
     w_tax_rate: str = ""
+    account_id: int = 0
 
     errors = {}
 
@@ -19,6 +20,7 @@ class PurchaseWTaxForm:
         self.w_tax_code = object.w_tax_code
         self.w_tax_name = object.w_tax_name
         self.w_tax_rate = object.w_tax_rate
+        self.account_id = object.account_id
 
     def save(self):
         if self.id is None:
@@ -26,7 +28,8 @@ class PurchaseWTaxForm:
             w_tax = PurchaseWTax(
                 w_tax_code=self.w_tax_code,
                 w_tax_name=self.w_tax_name,
-                w_tax_rate=self.w_tax_rate
+                w_tax_rate=self.w_tax_rate,
+                account_id=self.account_id
                 )
             db.session.add(w_tax)
         else:
@@ -36,6 +39,7 @@ class PurchaseWTaxForm:
                 w_tax.w_tax_code = self.w_tax_code
                 w_tax.w_tax_name = self.w_tax_name
                 w_tax.w_tax_rate = self.w_tax_rate
+                w_tax.account_id = self.account_id
         db.session.commit()
 
     def post(self, request_form):
@@ -43,6 +47,7 @@ class PurchaseWTaxForm:
         self.w_tax_code = request_form.get('w_tax_code')
         self.w_tax_name = request_form.get('w_tax_name')
         self.w_tax_rate = request_form.get('w_tax_rate')
+        self.account_id = request_form.get('account_id')
 
     def validate_on_submit(self):
         self.errors = {}
@@ -68,7 +73,11 @@ class PurchaseWTaxForm:
         else:
             if not check_format(self.w_tax_rate):
                 self.errors["w_tax_rate"] = "Please follow 0.00 format. (ei. 2.00)"
-            
+        
+        # Account Title
+        if not self.account_id:
+            self.errors["account_id"] = "Please select account title."
+
         if not self.errors:
             return True
         else:

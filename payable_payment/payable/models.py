@@ -1,5 +1,4 @@
 from acas_auth.application.extensions import db
-from pprint import pprint
 
 
 class Payable(db.Model):
@@ -19,8 +18,8 @@ class Payable(db.Model):
 
     def amount_due(self):
         balance = 0
-        for entry in self.payable_details:
-            balance += entry.amount
+        for detail in self.payable_details:
+            balance += detail.net()['amount_due']
         return balance
     
     def formatted_amount_due(self):
@@ -28,8 +27,8 @@ class Payable(db.Model):
     
     def entry(self):
         entries = []
-        for entry in self.payable_details:
-            entries.append(entry)
+        for detail in self.payable_details:
+            entries.append(detail.entry())
         return entries
 
 
@@ -56,7 +55,7 @@ class PayableDetail(db.Model):
     purchase_tax = db.relationship('PurchaseTax', backref='payable_details', lazy=True)
 
     purchase_w_tax_id = db.Column(db.Integer, db.ForeignKey('purchase_w_tax.id'), nullable=False)
-    purcuase_w_tax = db.relationship('PurchaseWTax', backref='payable_details', lazy=True)
+    purchase_w_tax = db.relationship('PurchaseWTax', backref='payable_details', lazy=True)
 
     @property
     def formatted_quantity(self):
@@ -66,7 +65,7 @@ class PayableDetail(db.Model):
         return f"{self.quantity} {self.measure.measure_name} of {self.item.item_name} for {self.amount}"
     
     def net(self):
-        vat = round(self.amount / (1 + (self.purchase_tax.vat_rate())) * self.purchase_tax.vat_rate, 2)
+        vat = round(self.amount / (1 + (self.purchase_tax.vat_rate())) * self.purchase_tax.vat_rate(), 2)
         net_of_vat = self.amount - vat
         ewt = round(net_of_vat * self.purchase_w_tax.wt_rate(), 2)
         amount_due = self.amount - ewt
@@ -114,7 +113,7 @@ class PayableDetail(db.Model):
         # AMOUNT DUE account is added in the accumulated entry in main model
         credits.append(
             {
-                "ammount": net['amount_due']
+                "amount": net['amount_due']
             }
         )
 

@@ -37,7 +37,7 @@ def home():
 @roles_accepted([ROLES_ACCEPTED])
 def add():
     item_dropdown = [{"id": item.id, "item_name": item.item_name} for item in Item.query.order_by('item_name').all()]
-    measure_dropdown = [{"id": measure.id, "measure_name": measure.measure_name} for measure in Measure.query.order_by('measure_name').all()]
+    measure_dropdown = [{"id": measure.id, "symbol": measure.symbol} for measure in Measure.query.order_by('symbol').all()]
     vendor_dropdown = [{"id": vendor.id, "vendor_name": vendor.vendor_name} for vendor in Vendor.query.order_by('vendor_name').all()]
     account_dropdown = [{"id": account.id, "account": account} for account in Account.query.order_by('account_number').all()]
     purchase_tax_dropdown = [{"id": purchase_tax.id, "purchase_tax": purchase_tax} for purchase_tax in PurchaseTax.query.order_by('purchase_tax_name').all()]
@@ -74,7 +74,7 @@ def add():
 @roles_accepted([ROLES_ACCEPTED])
 def edit(payable_id):   
     item_dropdown = [{"id": item.id, "item_name": item.item_name} for item in Item.query.order_by('item_name').all()]
-    measure_dropdown = [{"id": measure.id, "measure_name": measure.measure_name} for measure in Measure.query.order_by('measure_name').all()]
+    measure_dropdown = [{"id": measure.id, "symbol": measure.symbol} for measure in Measure.query.order_by('symbol').all()]
     vendor_dropdown = [{"id": vendor.id, "vendor_name": vendor.vendor_name} for vendor in Vendor.query.order_by('vendor_name').all()]
     account_dropdown = [{"id": account.id, "account": account} for account in Account.query.order_by('account_number').all()]
     purchase_tax_dropdown = [{"id": purchase_tax.id, "purchase_tax": purchase_tax} for purchase_tax in PurchaseTax.query.order_by('purchase_tax_name').all()]

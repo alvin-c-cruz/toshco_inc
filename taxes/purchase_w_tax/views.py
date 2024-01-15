@@ -7,6 +7,7 @@ from acas_auth.application.extensions import db
 from acas_auth.application.user import login_required, roles_accepted
 
 from . import app_name, app_label
+from ledger.account.models import Account
 
 
 bp = Blueprint(app_name, __name__, template_folder="pages", url_prefix=f"/{app_name}")
@@ -30,6 +31,7 @@ def home():
 @login_required
 @roles_accepted([ROLES_ACCEPTED])
 def add():
+    account_dropdown = [{"id": account.id, "account": account} for account in Account.query.order_by('account_number').all()]
     if request.method == "POST":
         form = PurchaseWTaxForm()
         form.post(request.form)
@@ -45,6 +47,7 @@ def add():
 
     context = {
         "form": form,
+        "account_dropdown": account_dropdown,        
     }
 
     return render_template(f"{app_name}/form.html", **context)
@@ -54,6 +57,7 @@ def add():
 @login_required
 @roles_accepted([ROLES_ACCEPTED])
 def edit(w_tax_id):   
+    account_dropdown = [{"id": account.id, "account": account} for account in Account.query.order_by('account_number').all()]
     if request.method == "POST":
         form = PurchaseWTaxForm()
         form.post(request.form)
@@ -69,6 +73,7 @@ def edit(w_tax_id):
 
     context = {
         "form": form,
+        "account_dropdown": account_dropdown,        
     }
 
     return render_template(f"{app_name}/form.html", **context)

@@ -16,6 +16,7 @@
                             <th>ATC</th>
                             <th>Description</th>
                             <th>Tax Rate</th>
+                            <th>Account Title</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -25,6 +26,7 @@
                             <td>{{ w_tax.w_tax_code }}</td>
                             <td>{{ w_tax.w_tax_name }}</td>
                             <td>{{ w_tax.w_tax_rate }}%</td>
+                            <td>{{ w_tax.account.account_number }}: {{ w_tax.account.account_title }}</td>
                             <td>
                                 <a href="{{ url_for('purchase_w_tax.edit', w_tax_id=w_tax.id) }}" class="btn btn-warning btn-sm">Edit</a>
                                 <a href="{{ url_for('purchase_w_tax.delete', w_tax_id=w_tax.id) }}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Delete</a>
@@ -32,7 +34,7 @@
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="4">No record found.</td>
+                            <td colspan="5">No record found.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

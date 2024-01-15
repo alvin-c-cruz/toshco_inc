@@ -134,9 +134,9 @@
                             <option value="0"></option>
                             {% for measure in measure_dropdown %}
                                 {% if measure['id'] == form_detail.measure_id %}
-                                <option value="{{ measure['id'] }}" selected>{{ measure['measure_name'] }}</option>
+                                <option value="{{ measure['id'] }}" selected>{{ measure['symbol'] }}</option>
                                 {% else %}
-                                <option value="{{ measure['id'] }}">{{ measure['measure_name'] }}</option>
+                                <option value="{{ measure['id'] }}">{{ measure['symbol'] }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
