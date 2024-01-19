@@ -2,6 +2,59 @@
 
 {% block title %}Payables{% endblock %}
 
+{% block styles %}
+<style>
+    .table th, .table td, .table input, .table select {
+        font-size: .85em; 
+    }
+
+    /* Add your style adjustments here */
+    .table th, .table td {
+        white-space: nowrap; /* Prevent line breaks in table cells */
+    }
+
+    th:nth-child(1),
+    td:nth-child(1) {
+        width: 10%; /* Quantity */
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+        width: 10%; /* Measure */
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+        width: 25%; /* Description */
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+        width: 10%; /* Amount */
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+        width: 20%; /* Account */
+    }
+
+    th:nth-child(6),
+    td:nth-child(6) {
+        width: 15%; /* VAT */
+    }
+
+    th:nth-child(7),
+    td:nth-child(7) {
+        width: 10%; /* WT */
+    }
+
+    input[type=number] {
+        text-align: right; 
+    }
+
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container p-5">
     {% if form.id %}
@@ -13,93 +66,88 @@
         <form action="{{ url_for('payable.add') }}" method="post">
     {% endif %}
 
-        <div class="row mb-3">
-            <label for="record_date" class="col-4 col-form-label">Date</label>
-            <div class="col-8">
-                <input type="date" name="record_date" value="{{ form.record_date }}" class="form-control" autofocus>
-                {% if form.errors.get('record_date') %}
-                <p class="text-danger">{{ form.errors.get('record_date') }}</p>
-                {% endif %}
-            </div>
+    <div class="row mb-2">
+        <div class="col-6">
+            <label for="record_date" class="form-label">Date</label>
+            <input type="date" name="record_date" value="{{ form.record_date }}" class="form-control" autofocus>
+            {% if form.errors.get('record_date') %}
+            <p class="text-danger">{{ form.errors.get('record_date') }}</p>
+            {% endif %}
+        </div>
+        <div class="col-6">
+            <label for="ap_number" class="form-label">AP No.</label>
+            <input type="text" name="ap_number" value="{{ form.ap_number }}" class="form-control">
+            {% if form.errors.get('ap_number') %}
+            <p class="text-danger">{{ form.errors.get('ap_number') }}</p>
+            {% endif %}    
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-6">
+            <label for="vendor_id" class="form-label">Vendor</label>
+            <select name="vendor_id" class="form-select">
+                <option value="0"></option>
+                {% for option in vendor_dropdown %}
+                    {% if option['id'] == form.vendor_id %}
+                <option value="{{ option['id'] }}" selected>{{ option['vendor_name'] }}</option>
+                    {% else %}
+                <option value="{{ option['id'] }}">{{ option['vendor_name'] }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% if form.errors.get('vendor_id') %}
+            <p class="text-danger">{{ form.errors.get('vendor_id') }}</p>
+            {% endif %}    
         </div>
 
-        <div class="row mb-3">
-            <label for="ap_number" class="col-4 col-form-label">AP No.</label>
-            <div class="col-8">
-                <input type="text" name="ap_number" value="{{ form.ap_number }}" class="form-control">
-                {% if form.errors.get('ap_number') %}
-                <p class="text-danger">{{ form.errors.get('ap_number') }}</p>
-                {% endif %}
-            </div>
+        <div class="col-6">
+            <label for="invoice_number" class="form-label">Invoice No.</label>
+            <input type="text" name="invoice_number" value="{{ form.invoice_number }}" class="form-control">
+            {% if form.errors.get('invoice_number') %}
+            <p class="text-danger">{{ form.errors.get('invoice_number') }}</p>
+            {% endif %}
         </div>
+    </div>
 
-        <div class="row mb-3">
-            <label for="vendor_id" class="col-4 col-form-label">Vendor</label>
-            <div class="col-8">
-                <select name="vendor_id" class="form-select">
-                    <option value="0"></option>
-                    {% for option in vendor_dropdown %}
-                        {% if option['id'] == form.vendor_id %}
-                            <option value="{{ option['id'] }}" selected>{{ option['vendor_name'] }}</option>
-                        {% else %}
-                            <option value="{{ option['id'] }}">{{ option['vendor_name'] }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                {% if form.errors.get('vendor_id') %}
-                <p class="text-danger">{{ form.errors.get('vendor_id') }}</p>
-                {% endif %}
-            </div>
+    <div class="row mb-2">
+        <div class="col-6">
+            <label for="receiving_number" class="form-label">RR No.</label>
+            <input type="text" name="receiving_number" value="{{ form.receiving_number }}" class="form-control">
+            {% if form.errors.get('receiving_number') %}
+            <p class="text-danger">{{ form.errors.get('receiving_number') }}</p>
+            {% endif %}
         </div>
+        <div class="col-6">
+            <label for="po_number" class="form-label">PO No.</label>
+            <input type="text" name="po_number" value="{{ form.po_number }}" class="form-control">
+            {% if form.errors.get('po_number') %}
+            <p class="text-danger">{{ form.errors.get('po_number') }}</p>
+            {% endif %}
+        </div>
+    </div>
 
-        <div class="row mb-3">
-            <label for="invoice_number" class="col-4 col-form-label">Invoice No.</label>
-            <div class="col-8">
-                <input type="text" name="invoice_number" value="{{ form.invoice_number }}" class="form-control">
-                {% if form.errors.get('invoice_number') %}
-                <p class="text-danger">{{ form.errors.get('invoice_number') }}</p>
-                {% endif %}
-            </div>
+    <div class="row mb-2">
+        <div class="col-6">
+            <label for="account_id" class="form-label">Payable Account</label>
+            <select name="account_id" class="form-select">
+                <option value="0"></option>
+                {% for account in account_dropdown %}
+                    {% if account['id'] == form.account_id %}
+                <option value="{{ account['id'] }}" selected>{{ account['account'] }}</option>
+                    {% else %}
+                <option value="{{ account['id'] }}">{{ account['account'] }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% if form.errors.get('account_id') %}
+            <p class="text-danger">{{ form.errors.get('account_id') }}</p>
+            {% endif %}
         </div>
-
-        <div class="row mb-3">
-            <label for="receiving_number" class="col-4 col-form-label">RR No.</label>
-            <div class="col-8">
-                <input type="text" name="receiving_number" value="{{ form.receiving_number }}" class="form-control">
-                {% if form.errors.get('receiving_number') %}
-                <p class="text-danger">{{ form.errors.get('receiving_number') }}</p>
-                {% endif %}
-            </div>
+        <div class="col-6">
+            
         </div>
-
-        <div class="row mb-3">
-            <label for="po_number" class="col-4 col-form-label">PO No.</label>
-            <div class="col-8">
-                <input type="text" name="po_number" value="{{ form.po_number }}" class="form-control">
-                {% if form.errors.get('po_number') %}
-                <p class="text-danger">{{ form.errors.get('po_number') }}</p>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <label for="account_id" class="col-4 col-form-label">Payable Account</label>
-            <div class="col-8">
-                <select name="account_id" class="form-select">
-                    <option value="0"></option>
-                    {% for account in account_dropdown %}
-                        {% if account['id'] == form.account_id %}
-                        <option value="{{ account['id'] }}" selected>{{ account['account'] }}</option>
-                        {% else %}
-                        <option value="{{ account['id'] }}">{{ account['account'] }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                {% if form.errors.get('account_id') %}
-                <p class="text-danger">{{ form.errors.get('account_id') }}</p>
-                {% endif %}
-            </div>
-        </div>
+    </div>        
 
         {% if form.errors.get('entry') %}
         <p class="text-danger">{{ form.errors.get('entry') }}</p>
@@ -257,5 +305,6 @@
         });
 
     </script>
+
 </div>
 {% endblock %}
