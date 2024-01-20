@@ -63,6 +63,7 @@ def edit(account_id):
 
         if form.validate_on_submit():
             form.save()
+            flash(f"Saved {form.account_number}: {form.account_title}.", category="success")
             return redirect(url_for(f'{app_name}.home'))
 
     else:
